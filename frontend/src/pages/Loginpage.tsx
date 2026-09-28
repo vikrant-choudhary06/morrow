@@ -69,16 +69,16 @@ const Loginpage = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 py-8 overflow-y-auto backdrop-blur-xs">
 
       {/* Login Card */}
-      <div className="relative w-full max-w-md rounded-2xl border border-[var(--border)] bg-[var(--card)] p-8 shadow-xl">
+      <div className="relative w-full max-w-md my-auto rounded-3xl border border-[var(--border)] bg-[var(--card)] p-8 shadow-2xl">
 
         {/* Close Button */}
         <button
           type="button"
           onClick={() => navigate("/")}
-          className="absolute right-5 top-4 text-2xl text-[var(--muted)] hover:text-[var(--dark)]"
+          className="absolute right-5 top-5 text-2xl text-[var(--muted)] hover:text-[var(--dark)]"
         >
           ×
         </button>
@@ -89,7 +89,7 @@ const Loginpage = () => {
             MORROW
           </p>
 
-          <h1 className="mt-2 text-3xl font-medium text-[var(--dark)]">
+          <h1 className="mt-2 font-serif text-3xl font-medium text-[var(--dark)]">
             Welcome Back
           </h1>
 

@@ -46,17 +46,10 @@ const AddListing = () => {
       }
 
       await Api.post("/products", formData);
-
       navigate("/mylistings");
     } catch (error: any) {
-      console.log("CREATE LISTING ERROR:", error);
-      console.log("BACKEND RESPONSE:", error.response?.data);
-      console.log(
-        "VALIDATION ERRORS JSON:",
-        JSON.stringify(error.response?.data?.errors, null, 2)
-      );
-
-      setError("Failed to create listing");
+      console.error("CREATE LISTING ERROR:", error);
+      setError(error.response?.data?.message || "Failed to create listing");
     } finally {
       setLoading(false);
     }
@@ -64,81 +57,79 @@ const AddListing = () => {
 
   return (
     <div className="min-h-screen bg-[var(--background)]">
-
       {/* TOPBAR */}
-      <header className="flex h-16 items-center justify-between border-b border-[var(--border)] bg-[#FCFAF6] px-10">
-        <p className="text-xs text-[var(--muted)]">
+      <header className="flex h-16 items-center justify-between border-b border-[var(--border)] bg-[#FCFAF6] px-4 sm:px-8">
+        <p className="text-xs font-medium text-[var(--muted)]">
           My Space / Add Listing
         </p>
 
         <button
           onClick={() => navigate("/mylistings")}
-          className="text-xs text-[var(--muted)] hover:text-[#29463C]"
+          className="text-xs font-medium text-[var(--muted)] hover:text-[var(--primary)]"
         >
           Cancel
         </button>
       </header>
 
       {/* MAIN */}
-      <main className="px-10 py-10">
-        <div className="mx-auto max-w-3xl">
+      <main className="px-4 py-8 sm:px-8 sm:py-10">
+        <div className="mx-auto max-w-3xl space-y-8">
 
           {/* HEADING */}
-          <div className="mb-10">
+          <div>
             <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">
               Create
             </p>
 
-            <h1 className="mt-3 font-serif text-4xl text-[#29463C]">
+            <h1 className="mt-2 font-serif text-3xl font-medium text-[var(--primary)] sm:text-4xl">
               Add a listing
             </h1>
 
-            <p className="mt-3 text-sm text-[var(--muted)]">
+            <p className="mt-2 text-sm text-[var(--muted)]">
               Add a new product to your Morrow store.
             </p>
           </div>
-         <div className="p-2"></div>
+
           {/* FORM */}
           <form
             onSubmit={handleSubmit}
-            className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-8"
+            className="rounded-3xl border border-[var(--border)] bg-[var(--card)] p-6 sm:p-8 shadow-xs space-y-6"
           >
-
             {/* NAME */}
-            <div className="mb-6">
-              <label className="mb-2 block text-xs font-medium text-[#29463C]">
-                Name
+            <div>
+              <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-[var(--primary)]">
+                Product Name
               </label>
 
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Product name"
+                placeholder="e.g. Mid-Century Walnut Lounge Chair"
                 required
-                className="w-full rounded-xl border border-[var(--border)] bg-[#FCFAF6] px-4 py-3 text-sm outline-none focus:border-[#29463C]"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 text-sm outline-none transition focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]"
               />
             </div>
 
             {/* DESCRIPTION */}
-            <div className="mb-6">
-              <label className="mb-2 block text-xs font-medium text-[#29463C]">
+            <div>
+              <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-[var(--primary)]">
                 Description
               </label>
 
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Describe your product"
+                placeholder="Describe material, condition, dimensions, and craft details..."
                 rows={5}
                 required
-                className="w-full resize-none rounded-xl border border-[var(--border)] bg-[#FCFAF6] px-4 py-3 text-sm outline-none focus:border-[#29463C]"
+                className="w-full resize-none rounded-xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 text-sm outline-none transition focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]"
               />
             </div>
 
             {/* CATEGORY */}
-            <div className="mb-6">
-              <label className="mb-2 block text-xs font-medium text-[#29463C]">
+            <div>
+              <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-[var(--primary)]">
                 Category
               </label>
 
@@ -146,21 +137,20 @@ const AddListing = () => {
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 required
-                className="w-full rounded-xl border border-[var(--border)] bg-[#FCFAF6] px-4 py-3 text-sm outline-none focus:border-[#29463C]"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 text-sm outline-none transition focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]"
               >
                 <option value="">Select category</option>
-                <option value="furniture">Furniture</option>
-                <option value="lighting">Lighting</option>
-                <option value="decor">Decor</option>
-                <option value="ceramics">Ceramics</option>
+                <option value="Furniture">Furniture</option>
+                <option value="Lighting">Lighting</option>
+                <option value="Decor">Decor</option>
+                <option value="Ceramics">Ceramics</option>
               </select>
             </div>
 
             {/* PRICE + CURRENCY */}
-            <div className="mb-6 grid gap-5 md:grid-cols-2">
-
+            <div className="grid gap-5 sm:grid-cols-2">
               <div>
-                <label className="mb-2 block text-xs font-medium text-[#29463C]">
+                <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-[var(--primary)]">
                   Price
                 </label>
 
@@ -171,32 +161,31 @@ const AddListing = () => {
                   placeholder="2000"
                   min="0"
                   required
-                  className="w-full rounded-xl border border-[var(--border)] bg-[#FCFAF6] px-4 py-3 text-sm outline-none focus:border-[#29463C]"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 text-sm outline-none transition focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]"
                 />
               </div>
 
               <div>
-                <label className="mb-2 block text-xs font-medium text-[#29463C]">
+                <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-[var(--primary)]">
                   Currency
                 </label>
 
                 <select
                   value={currency}
                   onChange={(e) => setCurrency(e.target.value)}
-                  className="w-full rounded-xl border border-[var(--border)] bg-[#FCFAF6] px-4 py-3 text-sm outline-none focus:border-[#29463C]"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 text-sm outline-none transition focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]"
                 >
-                  <option value="INR">INR</option>
-                  <option value="USD">USD</option>
-                  <option value="EUR">EUR</option>
+                  <option value="INR">INR (₹)</option>
+                  <option value="USD">USD ($)</option>
+                  <option value="EUR">EUR (€)</option>
                 </select>
               </div>
-
             </div>
 
             {/* STOCK */}
-            <div className="mb-6">
-              <label className="mb-2 block text-xs font-medium text-[#29463C]">
-                Stock
+            <div>
+              <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-[var(--primary)]">
+                Available Stock
               </label>
 
               <input
@@ -206,14 +195,14 @@ const AddListing = () => {
                 placeholder="10"
                 min="0"
                 required
-                className="w-full rounded-xl border border-[var(--border)] bg-[#FCFAF6] px-4 py-3 text-sm outline-none focus:border-[#29463C]"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 text-sm outline-none transition focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]"
               />
             </div>
 
             {/* IMAGES */}
-            <div className="mb-8">
-              <label className="mb-2 block text-xs font-medium text-[#29463C]">
-                Images
+            <div>
+              <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-[var(--primary)]">
+                Product Images
               </label>
 
               <input
@@ -221,31 +210,31 @@ const AddListing = () => {
                 accept="image/*"
                 multiple
                 onChange={(e) => setImages(e.target.files)}
-                className="w-full rounded-xl border border-[var(--border)] bg-[#FCFAF6] px-4 py-3 text-sm"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 text-sm file:mr-4 file:rounded-full file:border-0 file:bg-[var(--primary)] file:px-4 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-[var(--primary-hover)]"
               />
 
               <p className="mt-2 text-xs text-[var(--muted)]">
-                You can upload up to 3 images.
+                You can upload up to 3 high-quality images.
               </p>
             </div>
 
             {/* ERROR */}
             {error && (
-              <p className="mb-5 rounded-xl bg-[#F9E7E5] px-4 py-3 text-xs text-[var(--danger)]">
+              <p className="rounded-xl bg-red-50 px-4 py-3 text-xs text-[var(--danger)]">
                 {error}
               </p>
             )}
 
-            {/* SUBMIT */}
+            {/* SUBMIT BUTTON */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-full bg-[#29463C] px-6 py-3 text-sm font-medium text-white transition hover:bg-[#20382F] disabled:cursor-not-allowed disabled:opacity-60"
+              className="w-full rounded-full bg-[var(--primary)] px-6 py-3.5 text-sm font-medium text-white transition hover:bg-[var(--primary-hover)] disabled:cursor-not-allowed disabled:opacity-60 shadow-xs"
             >
-              {loading ? "Creating..." : "Create Listing"}
+              {loading ? "Creating listing..." : "Publish Listing"}
             </button>
-
           </form>
+
         </div>
       </main>
     </div>

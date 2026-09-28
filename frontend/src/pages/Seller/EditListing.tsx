@@ -20,22 +20,19 @@ const EditListing = () => {
     const fetchProduct = async () => {
       try {
         const response = await Api.get(`/products/${id}`);
+        const product = response.data?.data?.product;
 
-        const product = response.data.data.product;
-
-        setName(product.name);
-        setDescription(product.description);
-        setCategory(product.category);
-        setPrice(String(product.price.amount));
-        setCurrency(product.price.currency);
-        setStock(String(product.stock));
+        if (product) {
+          setName(product.name || "");
+          setDescription(product.description || "");
+          setCategory(product.category || "");
+          setPrice(String(product.price?.amount || ""));
+          setCurrency(product.price?.currency || "INR");
+          setStock(String(product.stock || ""));
+        }
       } catch (error: any) {
-        console.log("FETCH PRODUCT ERROR:", error);
-
-        setError(
-          error.response?.data?.message ||
-            "Failed to load listing"
-        );
+        console.error("FETCH PRODUCT ERROR:", error);
+        setError(error.response?.data?.message || "Failed to load listing");
       } finally {
         setLoading(false);
       }
@@ -44,95 +41,96 @@ const EditListing = () => {
     fetchProduct();
   }, [id]);
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
 
-  setError("");
+    try {
+      const data = {
+        name,
+        description,
+        category,
+        price: {
+          amount: Number(price),
+          currency,
+        },
+        stock: Number(stock),
+      };
 
-  try {
-    const data = {
-      name,
-      description,
-      category,
-      price: {
-        amount: Number(price),
-        currency,
-      },
-      stock: Number(stock),
-    };
-
-    await Api.put(`/products/${id}`, data);
-
-    navigate("/mylistings");
-  } catch (error: any) {
-    console.log("UPDATE LISTING ERROR:", error);
-    console.log("BACKEND RESPONSE:", error.response?.data);
-
-    setError(
-      error.response?.data?.message ||
-        "Failed to update listing"
-    );
-  }
-};
+      await Api.put(`/products/${id}`, data);
+      navigate("/mylistings");
+    } catch (error: any) {
+      console.error("UPDATE LISTING ERROR:", error);
+      setError(error.response?.data?.message || "Failed to update listing");
+    }
+  };
 
   if (loading) {
     return (
-      <div className="p-10 text-sm text-[var(--muted)]">
-        Loading listing...
+      <div className="p-10 text-center text-sm text-[var(--muted)]">
+        Loading listing details...
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-[var(--background)]">
-      <header className="flex h-16 items-center border-b border-[var(--border)] bg-[#FCFAF6] px-10">
-        <p className="text-xs text-[var(--muted)]">
+      <header className="flex h-16 items-center justify-between border-b border-[var(--border)] bg-[#FCFAF6] px-4 sm:px-8">
+        <p className="text-xs font-medium text-[var(--muted)]">
           My Space / Edit Listing
         </p>
+
+        <button
+          onClick={() => navigate("/mylistings")}
+          className="text-xs font-medium text-[var(--muted)] hover:text-[var(--primary)]"
+        >
+          Cancel
+        </button>
       </header>
 
-      <main className="px-10 py-10">
-        <div className="mx-auto max-w-3xl">
-          <div className="mb-8">
+      <main className="px-4 py-8 sm:px-8 sm:py-10">
+        <div className="mx-auto max-w-3xl space-y-8">
+          <div>
             <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">
               Manage
             </p>
 
-            <h1 className="mt-3 font-serif text-4xl text-[#29463C]">
+            <h1 className="mt-2 font-serif text-3xl font-medium text-[var(--primary)] sm:text-4xl">
               Edit Listing
             </h1>
 
-            <p className="mt-3 text-sm text-[var(--muted)]">
-              Update your listing information.
+            <p className="mt-2 text-sm text-[var(--muted)]">
+              Update your listing information and inventory.
             </p>
           </div>
 
           {error && (
-            <p className="mb-5 rounded-xl bg-[#FCE8E6] px-4 py-3 text-sm text-[var(--danger)]">
+            <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-[var(--danger)]">
               {error}
             </p>
           )}
 
           <form
             onSubmit={handleSubmit}
-            className="space-y-6 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-8"
+            className="rounded-3xl border border-[var(--border)] bg-[var(--card)] p-6 sm:p-8 shadow-xs space-y-6"
           >
             {/* Name */}
             <div>
-              <label className="mb-2 block text-sm font-medium">
-                Name
+              <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-[var(--primary)]">
+                Product Name
               </label>
 
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm outline-none"
+                required
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 text-sm outline-none transition focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]"
               />
             </div>
 
             {/* Description */}
             <div>
-              <label className="mb-2 block text-sm font-medium">
+              <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-[var(--primary)]">
                 Description
               </label>
 
@@ -140,33 +138,35 @@ const handleSubmit = async (e: React.FormEvent) => {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={5}
-                className="w-full rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm outline-none"
+                required
+                className="w-full resize-none rounded-xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 text-sm outline-none transition focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]"
               />
             </div>
 
             {/* Category */}
             <div>
-              <label className="mb-2 block text-sm font-medium">
+              <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-[var(--primary)]">
                 Category
               </label>
 
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm outline-none"
+                required
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 text-sm outline-none transition focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]"
               >
                 <option value="">Select category</option>
-                <option value="furniture">Furniture</option>
-                <option value="lighting">Lighting</option>
-                <option value="decor">Decor</option>
-                <option value="ceramics">Ceramics</option>
+                <option value="Furniture">Furniture</option>
+                <option value="Lighting">Lighting</option>
+                <option value="Decor">Decor</option>
+                <option value="Ceramics">Ceramics</option>
               </select>
             </div>
 
             {/* Price */}
-            <div className="grid gap-5 md:grid-cols-2">
+            <div className="grid gap-5 sm:grid-cols-2">
               <div>
-                <label className="mb-2 block text-sm font-medium">
+                <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-[var(--primary)]">
                   Price
                 </label>
 
@@ -174,30 +174,32 @@ const handleSubmit = async (e: React.FormEvent) => {
                   type="number"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
-                  className="w-full rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm outline-none"
+                  min="0"
+                  required
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 text-sm outline-none transition focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]"
                 />
               </div>
 
               <div>
-                <label className="mb-2 block text-sm font-medium">
+                <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-[var(--primary)]">
                   Currency
                 </label>
 
                 <select
                   value={currency}
                   onChange={(e) => setCurrency(e.target.value)}
-                  className="w-full rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm outline-none"
+                  className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 text-sm outline-none transition focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]"
                 >
-                  <option value="INR">INR</option>
-                  <option value="USD">USD</option>
-                  <option value="EUR">EUR</option>
+                  <option value="INR">INR (₹)</option>
+                  <option value="USD">USD ($)</option>
+                  <option value="EUR">EUR (€)</option>
                 </select>
               </div>
             </div>
 
             {/* Stock */}
             <div>
-              <label className="mb-2 block text-sm font-medium">
+              <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-[var(--primary)]">
                 Stock
               </label>
 
@@ -205,13 +207,15 @@ const handleSubmit = async (e: React.FormEvent) => {
                 type="number"
                 value={stock}
                 onChange={(e) => setStock(e.target.value)}
-                className="w-full rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm outline-none"
+                min="0"
+                required
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-4 py-3 text-sm outline-none transition focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]"
               />
             </div>
 
             <button
               type="submit"
-              className="rounded-full bg-[#29463C] px-7 py-3 text-sm font-medium text-white hover:bg-[#20382F]"
+              className="w-full rounded-full bg-[var(--primary)] px-7 py-3 text-sm font-medium text-white transition hover:bg-[var(--primary-hover)] shadow-xs"
             >
               Update Listing
             </button>

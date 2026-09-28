@@ -8,7 +8,7 @@ const PublicLayout = () => {
       
       <Navbar />
 
-      <main className="min-h-[calc(100vh-72px)]">
+      <main className="min-h-[calc(100vh-72px)] w-full">
         <Outlet />
       </main>
 

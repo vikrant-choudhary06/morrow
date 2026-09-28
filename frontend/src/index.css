@@ -1,23 +1,36 @@
 @import "tailwindcss";
 
-:root {
-  --background: #f6f1ea;
-  --card: #fffdfc;
-  --primary: #243b53;
-  --dark: #172a3a;
-  --terracotta: #c96f4a;
-  --gold: #d9a441;
-  --text: #263238;
-  --muted: #6b7280;
-  --border: #e5ded5;
-  --success: #5f8068;
-  --danger: #b85450;
+@theme {
+  --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-serif: "Playfair Display", Georgia, Cambria, "Times New Roman", serif;
+
+  --color-background: #f7f4ee;
+  --color-card: #ffffff;
+  --color-primary: #244034;
+  --color-primary-hover: #1a3026;
+  --color-dark: #1b2620;
+  --color-terracotta: #c86d49;
+  --color-gold: #d4a34b;
+  --color-text: #212c25;
+  --color-muted: #6f7d73;
+  --color-border: #e5ded5;
+  --color-success: #4b7a58;
+  --color-danger: #c4473a;
 }
 
-* {
-  margin:0;
-  padding: 3;
-  box-sizing: border-box;
+:root {
+  --background: #f7f4ee;
+  --card: #ffffff;
+  --primary: #244034;
+  --primary-hover: #1a3026;
+  --dark: #1b2620;
+  --terracotta: #c86d49;
+  --gold: #d4a34b;
+  --text: #212c25;
+  --muted: #6f7d73;
+  --border: #e5ded5;
+  --success: #4b7a58;
+  --danger: #c4473a;
 }
 
 html {
@@ -27,8 +40,11 @@ html {
 body {
   background-color: var(--background);
   color: var(--text);
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 button,
@@ -45,40 +61,4 @@ button {
 a {
   color: inherit;
   text-decoration: none;
-}
-.nav-link {
-  position: relative;
-  padding: 8px 0;
-  font-size: 14px;
-  color: var(--text);
-  transition: color 0.3s ease;
-}
-
-.nav-link::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 0;
-
-  width: 100%;
-  height: 2px;
-
-  background-color: var(--terracotta);
-
-  transform: scaleX(0);
-  transform-origin: left;
-
-  transition: transform 0.3s ease;
-}
-
-.nav-link:hover {
-  color: var(--terracotta);
-}
-
-.nav-link.active {
-  color: var(--dark);
-}
-
-.nav-link.active::after {
-  transform: scaleX(1);
 }
